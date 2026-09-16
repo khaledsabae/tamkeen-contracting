@@ -11,12 +11,20 @@ const chapters = [
   { n:'06', kicker:'النتيجة', title:'من الرؤية إلى الواقع', en:'From vision to reality', body:'نهاية الرحلة ليست مبنى فقط، بل أصلٌ صُمم ونُفذ ليصمد.' },
 ];
 
+const clips = [
+  '/Golden_lines_forming_constructio…_20260916173516.mp4',
+  '/BIM_model_becoming_real_construc…_20260916173709.mp4',
+  '/Camera_entering_building_reveali…_20260916173950.mp4',
+  '/Building_systems_transition_to_i…_20260916174208.mp4',
+  '/Creating_architectural_transitio…_20260916174455.mp4',
+];
+
 export default function CinematicStory(){
   const wrap = useRef<HTMLElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
+  const videos = useRef<(HTMLVideoElement|null)[]>([]);
   const [active,setActive]=useState(0);
   const [progress,setProgress]=useState(0);
-  const [ready,setReady]=useState(false);
+  const [durations,setDurations]=useState<number[]>(Array(clips.length).fill(0));
 
   useEffect(()=>{
     const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -27,20 +35,34 @@ export default function CinematicStory(){
       const p=Math.max(0,Math.min(1,-r.top/Math.max(1,total)));
       setProgress(p);
       setActive(Math.min(chapters.length-1,Math.floor(p*chapters.length)));
-      if(!reduce && video.current && video.current.duration && ready){
-        const target=p*Math.max(0,video.current.duration-.04);
-        if(Math.abs(video.current.currentTime-target)>.025) video.current.currentTime=target;
-      }
+      if(reduce) return;
+
+      const scaled=p*clips.length;
+      const clipIndex=Math.min(clips.length-1,Math.floor(scaled));
+      const local=Math.min(1,scaled-clipIndex);
+      videos.current.forEach((v,i)=>{
+        if(!v || !durations[i]) return;
+        const desired=i<clipIndex?Math.max(0,durations[i]-.04):i>clipIndex?0:local*Math.max(0,durations[i]-.04);
+        if(Math.abs(v.currentTime-desired)>.025) v.currentTime=desired;
+      });
     };
     onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
     return()=>window.removeEventListener('scroll',onScroll);
-  },[ready]);
+  },[durations]);
+
+  const currentClip=Math.min(clips.length-1,Math.floor(progress*clips.length));
 
   return <section ref={wrap} className="cinematic" id="story">
     <div className="stage">
-      <video ref={video} className="film" muted playsInline preload="auto" poster="/media/cinematic-poster.webp" onLoadedMetadata={()=>setReady(true)} aria-hidden="true">
-        <source src="/media/cinematic-master.mp4" type="video/mp4" />
-      </video>
+      <div className="filmStack" aria-hidden="true">
+        {clips.map((src,i)=><video
+          key={src}
+          ref={el=>{videos.current[i]=el}}
+          className={`film ${i===currentClip?'visible':''}`}
+          muted playsInline preload="auto"
+          onLoadedMetadata={e=>setDurations(ds=>{const next=[...ds];next[i]=e.currentTarget.duration;return next})}
+        ><source src={src} type="video/mp4" /></video>)}
+      </div>
       <div className="mediaFallback" aria-hidden="true" />
       <div className="shade"/><div className="grain"/>
       <header className="nav">
