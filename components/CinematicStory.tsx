@@ -12,56 +12,64 @@ const chapters = [
 ];
 
 const clips = [
-  '/Golden_lines_forming_constructio…_20260916173516.mp4',
-  '/BIM_model_becoming_real_construc…_20260916173709.mp4',
-  '/Camera_entering_building_reveali…_20260916173950.mp4',
-  '/Building_systems_transition_to_i…_20260916174208.mp4',
-  '/Creating_architectural_transitio…_20260916174455.mp4',
+  '/media/clip-01-vision-to-bim.mp4',
+  '/media/clip-02-bim-to-construction.mp4',
+  '/media/clip-03-construction-to-mep.mp4',
+  '/media/clip-04-mep-to-capabilities.mp4',
+  '/media/clip-05-capabilities-to-completion.mp4',
 ];
 
 export default function CinematicStory(){
   const wrap = useRef<HTMLElement>(null);
   const videos = useRef<(HTMLVideoElement|null)[]>([]);
+  const raf = useRef<number|null>(null);
   const [active,setActive]=useState(0);
   const [progress,setProgress]=useState(0);
   const [durations,setDurations]=useState<number[]>(Array(clips.length).fill(0));
+  const [mediaFailed,setMediaFailed]=useState(false);
 
   useEffect(()=>{
     const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const onScroll=()=>{
+    const update=()=>{
+      raf.current=null;
       if(!wrap.current) return;
       const r=wrap.current.getBoundingClientRect();
       const total=wrap.current.offsetHeight-window.innerHeight;
       const p=Math.max(0,Math.min(1,-r.top/Math.max(1,total)));
       setProgress(p);
-      setActive(Math.min(chapters.length-1,Math.floor(p*chapters.length)));
+      setActive(Math.min(chapters.length-1,Math.floor(Math.min(.999999,p)*chapters.length)));
       if(reduce) return;
-
-      const scaled=p*clips.length;
+      const scaled=Math.min(.999999,p)*clips.length;
       const clipIndex=Math.min(clips.length-1,Math.floor(scaled));
-      const local=Math.min(1,scaled-clipIndex);
+      const local=scaled-clipIndex;
       videos.current.forEach((v,i)=>{
         if(!v || !durations[i]) return;
-        const desired=i<clipIndex?Math.max(0,durations[i]-.04):i>clipIndex?0:local*Math.max(0,durations[i]-.04);
-        if(Math.abs(v.currentTime-desired)>.025) v.currentTime=desired;
+        const end=Math.max(0,durations[i]-.035);
+        const desired=i<clipIndex?end:i>clipIndex?0:local*end;
+        if(Math.abs(v.currentTime-desired)>.018){
+          try{v.currentTime=desired}catch{}
+        }
       });
     };
-    onScroll(); window.addEventListener('scroll',onScroll,{passive:true});
-    return()=>window.removeEventListener('scroll',onScroll);
+    const onScroll=()=>{if(raf.current===null) raf.current=requestAnimationFrame(update)};
+    update();
+    window.addEventListener('scroll',onScroll,{passive:true});
+    window.addEventListener('resize',onScroll,{passive:true});
+    return()=>{window.removeEventListener('scroll',onScroll);window.removeEventListener('resize',onScroll);if(raf.current!==null) cancelAnimationFrame(raf.current)};
   },[durations]);
 
-  const currentClip=Math.min(clips.length-1,Math.floor(progress*clips.length));
+  const scaled=Math.min(.999999,progress)*clips.length;
+  const currentClip=Math.min(clips.length-1,Math.floor(scaled));
+  const localProgress=scaled-currentClip;
 
   return <section ref={wrap} className="cinematic" id="story">
     <div className="stage">
-      <div className="filmStack" aria-hidden="true">
-        {clips.map((src,i)=><video
-          key={src}
-          ref={el=>{videos.current[i]=el}}
-          className={`film ${i===currentClip?'visible':''}`}
-          muted playsInline preload="auto"
-          onLoadedMetadata={e=>setDurations(ds=>{const next=[...ds];next[i]=e.currentTarget.duration;return next})}
-        ><source src={src} type="video/mp4" /></video>)}
+      <div className={`filmStack ${mediaFailed?'failed':''}`} aria-hidden="true">
+        {clips.map((src,i)=>{
+          const distance=Math.abs(i-currentClip);
+          const near=i===currentClip || (i===currentClip+1 && localProgress>.82) || (i===currentClip-1 && localProgress<.18);
+          return <video key={src} ref={el=>{videos.current[i]=el}} className={`film ${near?'visible':''}`} style={{opacity:i===currentClip?1:distance===1?.12:0}} muted playsInline preload={Math.abs(i-currentClip)<=1?'auto':'metadata'} onError={()=>setMediaFailed(true)} onLoadedMetadata={e=>setDurations(ds=>{if(ds[i]===e.currentTarget.duration)return ds;const next=[...ds];next[i]=e.currentTarget.duration;return next})}><source src={src} type="video/mp4" /></video>
+        })}
       </div>
       <div className="mediaFallback" aria-hidden="true" />
       <div className="shade"/><div className="grain"/>
@@ -71,7 +79,7 @@ export default function CinematicStory(){
         <span className="demo">DEMO CONCEPT</span>
       </header>
       <div className="chapterShell">
-        {chapters.map((c,i)=><article key={c.n} className={`chapter ${i===active?'active':''}`}>
+        {chapters.map((c,i)=><article key={c.n} className={`chapter ${i===active?'active':''}`} aria-hidden={i!==active}>
           <div className="eyebrow"><span>{c.n}</span>{c.kicker}</div>
           <h1>{c.title}</h1><p className="en">{c.en}</p><p>{c.body}</p>
           {i===0&&<a className="cta" href="#capabilities">اكتشف قدراتنا <span>←</span></a>}
@@ -79,8 +87,8 @@ export default function CinematicStory(){
         </article>)}
       </div>
       <div className="rail" aria-hidden="true"><span style={{height:`${progress*100}%`}}/></div>
-      <div className="counter"><b>0{active+1}</b><i/>06</div>
-      <div className="scrollHint">SCROLL TO BUILD <span>↓</span></div>
+      <div className="counter" aria-hidden="true"><b>0{active+1}</b><i/>06</div>
+      <div className="scrollHint" aria-hidden="true">SCROLL TO BUILD <span>↓</span></div>
     </div>
   </section>
 }
