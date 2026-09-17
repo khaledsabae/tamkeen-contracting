@@ -65,8 +65,10 @@ export default function CinematicStory() {
     autoStop.current = false;
     setAutoPlaying(true);
     const total = wrap.current.offsetHeight - window.innerHeight;
-    const from = Math.max(0, -wrap.current.getBoundingClientRect().top);
-    const target = Math.min(total, from + total); // ride to the end of the journey
+    // Absolute offset of the section — robust even if content is added above it later
+    const sectionTop = window.scrollY + wrap.current.getBoundingClientRect().top;
+    const from = Math.max(sectionTop, Math.min(sectionTop + total, window.scrollY));
+    const target = sectionTop + total; // ride to the end of the journey
     const dist = Math.max(1, target - from);
     const duration = Math.max(8000, (dist / Math.max(1, total)) * MASTER_DURATION * 1000 * 1.15);
     const t0 = performance.now();
@@ -93,6 +95,11 @@ export default function CinematicStory() {
       window.removeEventListener('keydown', cancel);
     };
   }, [autoPlaying]);
+  // Cancel any in-flight auto-scroll animation when the component unmounts
+  useEffect(() => () => {
+    autoStop.current = true;
+    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
+  }, []);
 
   // Scroll → video currentTime, rAF-throttled, error-safe
   useEffect(() => {
