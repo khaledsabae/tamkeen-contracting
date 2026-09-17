@@ -2,7 +2,8 @@
 
 > Single source of truth. The old "Pending (next milestones)" section was removed —
 > every item in it is now verified below.
-> Functional implementation commit: `04d4407` — review-ready HEAD: `a8ea164`.
+> Functional implementation commit: `04d4407` · performance sprint: `fecf56e`
+> Review-fix regressions (PLAY JOURNEY midpoint + CSS-var intensity): `90e9e4e` — review-ready HEAD: `90e9e4e`.
 
 ## 1. Baseline & build
 | Check | Result | Evidence |
@@ -59,9 +60,24 @@
   portfolio plates, final CTA — same dark-green/gold architectural language
 - Phone screenshot through tunnel (390px): PLAY JOURNEY button visible, composition intact
 
+## 6b. Performance sprint (fecf56e + 90e9e4e)
+| Check | Result |
+|---|---|
+| Mobile first-load | 0.76MB shell + poster only; video attaches at idle |
+| Mobile video selection | PASS — requests ONLY 720-compact (verified locally AND via tunnel; zero desktop bytes) |
+| Desktop compact master | 10.09MB (CRF24, GOP 0.5s, faststart) — target 8-12MB PASS |
+| Mobile compact 854w | 4.47MB (CRF26, quality frame-checked) — target 3-5MB PASS |
+| Manual scrub seek rate | 24Hz cap + frame-quantized targets (video is 24fps) |
+| Scrub state | refs + CSS vars; React state only on chapter change |
+| PLAY JOURNEY architecture | native video.play(); scroll follows currentTime; scrub suspended during playback |
+| PLAY JOURNEY start 0/40/75% | PASS — video starts at matching timestamp, ends at section end in ch06 |
+| Text intensity continuity | PASS - computed opacity 0.02-0.97-1.0-0.67 across a window (CSS vars) |
+| Fonts | next/font self-hosted (render-blocking @import removed) |
+| Mobile grain / below-fold | grain off on mobile; content-visibility:auto |
+
 ## 7. Video specs
-- Desktop master: 22.0417s, 1280×720, h264 yuv420p, CFR 24fps, GOP 0.5s, faststart, no audio, 20.6MB
-- Mobile master: same timeline, 960w, CRF22, 8.1MB (served ≤1024px)
+- Desktop compact: 22.0417s, 1280×720, h264 CRF24, GOP 0.5s, faststart, no audio, 10.09MB
+- Mobile compact: same timeline, 854w, CRF26, 4.47MB (served ≤1024px)
 - Posters: cinematic-poster.webp (107KB), cinematic-poster-mobile.webp (39KB)
 - Preload: metadata + HTTP range streaming (app shell never blocked)
 

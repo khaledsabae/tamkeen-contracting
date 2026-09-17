@@ -7,7 +7,10 @@
 | clip-03-construction-to-mep.mp4 | KEEP (original) | supplied | 1280x720 h264 24fps, 4.01s |
 | clip-04-mep-to-capabilities.mp4 | KEEP (original) | supplied | 1280x720 h264 24fps, 4.01s |
 | clip-05-capabilities-to-completion.mp4 | KEEP (original) | supplied | 1280x720 h264 24fps, 6.02s |
-| cinematic-master.mp4 | GENERATED | concat lossless → x264 CRF18 re-encode (GOP 0.5s for scrub) | 22.04s, CFR24, faststart, no audio, 20.6MB |
+| cinematic-master.mp4 | KEEP (full-quality source) | concat lossless + CRF18 | 22.04s, CFR24, GOP 0.5s, faststart, 20.6MB |
+| cinematic-master-1080-compact.mp4 | GENERATED (serving) | x264 CRF24 re-encode | 22.04s, GOP 0.5s, faststart, 10.09MB — desktop |
+| cinematic-master-720-compact.mp4 | GENERATED (serving) | 854w CRF26 | same timeline, 4.47MB — mobile ≤1024px |
+| cinematic-master-960.mp4 | SUPERSEDED | — | replaced by 720-compact |
 | cinematic-master-960.mp4 | GENERATED | master → scale 960w, CRF22 | same timeline, 8.1MB, served ≤1024px |
 | cinematic-poster.webp | GENERATED | master @0.5s | 107KB |
 | cinematic-poster-mobile.webp | GENERATED | master @0.5s scale 720w | 39KB |
