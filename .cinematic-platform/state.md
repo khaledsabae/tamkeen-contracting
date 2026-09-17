@@ -1,7 +1,7 @@
 # TAMKEEN Cinematic Platform — State (final, housekept 2026-09-17)
 
-Branch: `cinematic-v2` — review-ready HEAD `b51ca6f` (visual polish pass) (pushed; main untouched; no merge, no deploy)
-Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · review-fix regressions: `90e9e4e` · footprint cleanup: `0ae73d5` · production-footprint cleanup: `0ae73d5`→`c12034d` · visual polish: `b51ca6f`
+Branch: `cinematic-v2` — review-ready HEAD: legibility scrim pass (see git log; supersedes the SHAs below) (pushed; main untouched; no merge, no deploy)
+Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · review-fix regressions: `90e9e4e` · footprint cleanup: `0ae73d5` · production-footprint cleanup: `0ae73d5`→`c12034d` · visual polish: `b51ca6f` · headline copy fix: `de142bd` · cinematic text legibility (local scrim): see HEAD
 
 ## Phases
 - 0 Baseline: main@30c6762 green (ci/typecheck/build)
@@ -15,7 +15,10 @@ Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · 
 - Performance: desktop compact 10.09MB / mobile compact 4.47MB (≤1024px); 24Hz quantized scrub;
   native-playback PLAY JOURNEY; poster-first idle attach; no mobile double-download (verified local+tunnel)
 - 13 QA: full matrix (768/1024/1440/1920/390) + regression after Next 15.5.25 — all PASS (see qa.md)
-- 14 Deployment: NOT authorized/performed — awaiting owner visual review
+- 14 Cinematic text legibility (post-polish): LOCAL radial dark-green scrim (.chapter::before,
+  rgba(6,26,22,.62) core, feathered, synced to chapter intensity) + text shadows on en/body/headline/eyebrow
+  + counter plate — first-scene clarity preserved, no full-screen re-darkening (see qa.md §10)
+- 15 Deployment: NOT authorized/performed — awaiting owner visual review
 
 ## Timestamp map (master 22.0417s)
 ch1 0.000 · ch2 0.182 · ch3 0.364 · ch4 0.545 (SIGNATURE) · ch5 0.727 · ch6 0.911

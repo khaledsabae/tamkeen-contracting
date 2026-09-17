@@ -5,7 +5,8 @@
 > Functional implementation commit: `04d4407` · performance sprint: `fecf56e`
 > Review-fix regressions (PLAY JOURNEY midpoint + CSS-var intensity): `90e9e4e`
 > Production-footprint cleanup (public/media = serving assets only, 15.1MB): `c12034d`
-Visual polish pass (identity name, olive continuity, hero clarity, typography, copy, gold): `b51ca6f` — review-ready HEAD: `b51ca6f`. Before/after screenshots captured for hero+capabilities+manifesto+CTA at 390/1440.
+Visual polish pass (identity name, olive continuity, hero clarity, typography, copy, gold): `b51ca6f`. Headline copy fix: `de142bd`.
+Cinematic text legibility pass (LOCAL chapter scrim + text shadows + counter plate): see current HEAD — evidence in `evidence/legibility/`, results in §9 below.
 
 ## 1. Baseline & build
 | Check | Result | Evidence |
@@ -87,7 +88,25 @@ Visual polish pass (identity name, olive continuity, hero clarity, typography, c
 - Tunnel: https://evanescence-supporting-encounter-outstanding.trycloudflare.com
   (temporary — dies if the laptop sleeps; serves runtime build `c12034d` with the play button)
 
-## 9. Known limitations
+## 9. Cinematic text legibility pass (post-`de142bd`)
+Treatment: `.chapter::before` radial ellipse `rgba(6,26,22,.62) 0% → .42 55% → transparent 80%`
+(local, feathered, synced to `--chapter-intensity`; center-aligned variant centered at 50%);
+`.en` weight 700 + shadow `0 1px 8px rgba(0,0,0,.7)`; body shadow + desktop-only 17.5px;
+h1 soft `0 2px 22px`; eyebrow light shadow; rotated counter translucent plate `rgba(3,13,11,.45)`.
+No full-screen re-darkening; no blur/backdrop-filter; video payload untouched.
+| Check | Result |
+|---|---|
+| typecheck / production build | PASS / PASS (static prerender) |
+| Scrub @50%/90%/reverse 20% | PASS — 12.79s / 22.00s / 5.13s (identical to pre-change baseline; ch04 @50%) |
+| PLAY JOURNEY from 40% + wheel cancel | PASS — advances (t 8.79→11.76s, scroll follows), cancel restores manual control |
+| Responsive 390/768/1440 | PASS — overflow-x = 0 at all three |
+| Reduced motion | PASS — no video, playCtrl hidden, ch1 stable, scrim suppressed |
+| Console | PASS — 0 severe errors (only pre-existing favicon.ico 404) |
+| Scrim not a visible box | PASS — feathered ellipse, no rectangle edge (1440 ch4/ch5, 390 ch4) |
+| First-scene clarity preserved | PASS — video brighter than pre-polish; readability via local scrim (steady-ch1-1440) |
+| Evidence | `.cinematic-platform/evidence/legibility/*.jpg` — before/after ch1+ch4 at 1440+390, steady ch1, ch5, reduced-motion |
+
+## 10. Known limitations
 - Video is 720p (source clips' native resolution)
 - Demo content only — no invented company facts; placeholders clearly marked
 - Production deployment NOT performed — awaiting owner visual approval
