@@ -29,3 +29,18 @@
 ## Video specs (cinematic-master.mp4)
 - 22.0417s, 1280x720, h264 yuv420p, CFR 24fps, GOP 0.5s, faststart, no audio, 21.6MB
 - Posters: cinematic-poster.webp (107KB), cinematic-poster-mobile.webp (39KB)
+
+
+## Milestone 2 (post-journey + matrix + upgrade) — 2026-09-17
+| Check | Result |
+|---|---|
+| Sections ledger/approach/portfolio/CTA render | PASS (screenshots reviewed) |
+| Tablet 768 scrub/overflow/sections/errors | PASS (13.22s, no ovf, 0 errs) |
+| Tablet 1024 | PASS (12.79s) |
+| Laptop 1440 | PASS (12.80s) |
+| Wide 1920 | PASS (12.79s) |
+| Mobile 390 (960w master) | PASS (13.23s, no ovf) |
+| Keyboard path | PASS (brand→nav→CTAs, logical) |
+| Focus-visible outlines | PASS (solid gold outline verified) |
+| Reduced-motion (new build) | PASS (fallback visible, ch1 stable) |
+| Next 15.5.25 regression | PASS (ci/typecheck/build/scrub/mobile) |
