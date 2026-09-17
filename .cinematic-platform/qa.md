@@ -85,8 +85,8 @@ Cinematic text legibility pass (LOCAL chapter scrim + text shadows + counter pla
 - Preload: metadata + HTTP range streaming (app shell never blocked)
 
 ## 8. Preview
-- Tunnel: https://evanescence-supporting-encounter-outstanding.trycloudflare.com
-  (temporary — dies if the laptop sleeps; serves runtime build `c12034d` with the play button)
+- Tunnel: https://mysterious-worlds-supervisors-disposition.trycloudflare.com
+  (temporary — dies if the laptop sleeps; serves production build of the legibility pass, HEAD `2c6dd6b`)
 
 ## 9. Cinematic text legibility pass (post-`de142bd`)
 Treatment: `.chapter::before` radial ellipse `rgba(6,26,22,.62) 0% → .42 55% → transparent 80%`
