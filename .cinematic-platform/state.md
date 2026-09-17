@@ -6,7 +6,7 @@ Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · 
 ## Phases
 - 0 Baseline: main@30c6762 green (ci/typecheck/build)
 - 1–4 Reference/story/assets: approved direction + real timestamp map
-- 5–6 Video architecture: 5 clips → ONE master (lossless concat + scrub-optimized re-encode) + mobile 960w variant
+- 5–6 Video architecture: 5 clips → ONE master (lossless concat + scrub-optimized re-encode) + mobile compact variant
 - 7 Scroll scrub: single <video>, rAF-throttled, forward+reverse verified, 0 console errors
 - 8 Choreography: real-landmark chapter windows, per-chapter alignment, signature construction→MEP techGrid
 - 8b PLAY JOURNEY auto-scroll: video-synced ride, manual-cancel, STOP state, absolute sectionTop offset, rAF cleanup on unmount (review notes 04d4407)

@@ -40,7 +40,7 @@
 ## 4. Responsive matrix (all: no overflow-x, all sections present, 0 console errors)
 | Viewport | Scrub @50% | Result |
 |---|---|---|
-| Mobile 390×844 | 13.23s (960w master) | PASS |
+| Mobile 390×844 | 13.21s (mobile-compact master) | PASS |
 | Tablet 768×1024 | 13.22s | PASS |
 | Tablet 1024×768 | 12.79s | PASS |
 | Laptop 1440×900 | 12.80s | PASS |
