@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import BrandLockup from '@/components/BrandLockup';
+import LocaleSwitch from '@/components/LocaleSwitch';
+import type { Dict } from '@/lib/i18n';
 
 /**
  * CinematicStory V2.1 — performance sprint.
@@ -11,16 +13,8 @@ import BrandLockup from '@/components/BrandLockup';
  * - React state only for chapter changes; scroll progress lives in refs + CSS var.
  * - PLAY JOURNEY = native video.play(); page scroll follows currentTime (sequential
  *   decode, no seek storm). Manual input cancels, pauses video, returns to scrub.
+ * - All copy comes from the locale dictionary (lib/i18n); geometry is language-agnostic.
  */
-
-const CHAPTERS = [
-  { n: '01', kicker: 'البداية', title: 'نبني اليوم لغدٍ أقوى', en: 'BUILDING TODAY FOR A STRONGER TOMORROW', body: 'من أول خط على الأرض تبدأ رحلة تتحول فيها الرؤية إلى واقع.', align: 'right' },
-  { n: '02', kicker: 'الهندسة', title: 'نحوّل الرؤية إلى خطة قابلة للتنفيذ', en: 'VISION ENGINEERED INTO REALITY', body: 'تنسيق هندسي ورؤية رقمية تضع التنفيذ في قلب القرار.', align: 'right' },
-  { n: '03', kicker: 'التنفيذ', title: 'من الأساسات إلى الإنجاز', en: 'FROM FOUNDATION TO DELIVERY', body: 'تنفيذ منضبط يربط الموقع والهندسة والجودة في مسار واحد.', align: 'right' },
-  { n: '04', kicker: 'الأنظمة', title: 'هندسة تعمل خلف كل إنجاز', en: 'SYSTEMS BEHIND EVERY STRUCTURE', body: 'حلول MEP متكاملة تُنسّق مع المبنى بدل أن تُضاف إليه لاحقًا.', align: 'engineered' },
-  { n: '05', kicker: 'القدرات', title: 'حلول متكاملة للمشاريع', en: 'INTEGRATED PROJECT CAPABILITIES', body: 'مبانٍ، بنية تحتية، مرافق وأنظمة هندسية ضمن رؤية تنفيذية واحدة.', align: 'center' },
-  { n: '06', kicker: 'النتيجة', title: 'من الرؤية إلى الواقع', en: 'FROM VISION TO REALITY', body: 'نهاية الرحلة ليست مبنى فقط، بل أصلٌ صُمم ونُفذ ليصمد.', align: 'center' },
-] as const;
 
 const MASTER_DURATION = 22.0417;
 const VIDEO_FPS = 24;
@@ -29,7 +23,7 @@ const SEEK_MIN_INTERVAL = 1000 / 24; // manual scrub seeks capped at 24Hz
 const LANDMARKS = [0, 4.01, 8.02, 12.03, 16.04, 20.07];
 
 const pOf = (t: number) => t / MASTER_DURATION;
-const WINDOWS = CHAPTERS.map((_, i) => ({
+const WINDOWS = Array.from({ length: 6 }, (_, i) => ({
   start: pOf(LANDMARKS[i]),
   end: i === 5 ? 1 : pOf(LANDMARKS[i + 1]),
 }));
@@ -45,7 +39,8 @@ const intensityCalc = (local: number) =>
 // Keep 3-decimal stability for CSS var writes
 const intensity3 = (x: number) => Math.round(x * 1000) / 1000;
 
-export default function CinematicStory() {
+export default function CinematicStory({ dict }: { dict: Dict }) {
+  const CHAPTERS = dict.chapters;
   const wrap = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const raf = useRef<number | null>(null);
@@ -220,15 +215,20 @@ export default function CinematicStory() {
         <div className="grain grainLight" />
 
         <header className="nav">
-          <a className="brand" href="#story" aria-label="تمكين الرئيسية">
+          <a className="brand" href="#story" aria-label={dict.nav.homeAria}>
             <BrandLockup />
           </a>
-          <nav aria-label="التنقل الرئيسي">
-            <a href="#story">رحلتنا</a>
-            <a href="#capabilities">قدراتنا</a>
-            <a href="#contact">تواصل</a>
+          <nav aria-label={dict.nav.navAria}>
+            <a href="#story">{dict.nav.story}</a>
+            <a href="#capabilities">{dict.nav.capabilities}</a>
+            <a href="#contact">{dict.nav.contact}</a>
           </nav>
-          <span className="demo">DEMO CONCEPT</span>
+          <LocaleSwitch
+            to={dict.locale === 'ar' ? 'en' : 'ar'}
+            label={dict.nav.switchLabel}
+            ariaLabel={dict.nav.switchAria}
+          />
+          <span className="demo">{dict.nav.demo}</span>
         </header>
 
         <div className="chapterShell">
@@ -244,8 +244,8 @@ export default function CinematicStory() {
                 <h1>{c.title}</h1>
                 <p className="en">{c.en}</p>
                 <p>{c.body}</p>
-                {i === 0 && <a className="cta" href="#capabilities">اكتشف قدراتنا <span>←</span></a>}
-                {i === 5 && <a className="cta" href="#contact">ابدأ مشروعك معنا <span>←</span></a>}
+                {i === 0 && <a className="cta" href={dict.ctaFirst.href}>{dict.ctaFirst.text} <span>{dict.arrow}</span></a>}
+                {i === 5 && <a className="cta" href={dict.ctaLast.href}>{dict.ctaLast.text} <span>{dict.arrow}</span></a>}
               </article>
             );
           })}
@@ -257,10 +257,10 @@ export default function CinematicStory() {
           type="button"
           className={`playCtrl ${autoPlaying ? 'playing' : ''}`}
           onClick={autoPlaying ? stopAuto : startAuto}
-          aria-label={autoPlaying ? 'إيقاف الرحلة التلقائية' : 'تشغيل الرحلة تلقائيًا'}
+          aria-label={autoPlaying ? dict.play.ariaStop : dict.play.ariaPlay}
         >
           <span className="playIco" aria-hidden="true">{autoPlaying ? '❚❚' : '▶'}</span>
-          {autoPlaying ? 'STOP' : 'PLAY JOURNEY'}
+          {autoPlaying ? dict.play.stop : dict.play.label}
         </button>
       </div>
     </section>

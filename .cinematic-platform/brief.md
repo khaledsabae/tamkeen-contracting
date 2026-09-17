@@ -9,4 +9,5 @@
 - Content rule: reference controls HOW, TAMKEEN controls WHAT; no invented company facts; all demo copy explicitly marked for replacement
 - PLAY JOURNEY: auto-scroll ride synced to the video timeline; any manual input cancels; hidden under reduced-motion
 - Stack: Next 15.5.25 (patched), React 19.1.1, static prerender, no backend (marketing demo)
+- Bilingual: Arabic default (`/ar`) + English (`/en`); route-based, no i18n library; Arabic legal name stays in Arabic script in EN (no official English legal name — do not invent one)
 - Deployment: NOT authorized — owner visual review first, then explicit merge/deploy order

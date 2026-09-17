@@ -18,7 +18,9 @@ Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · 
 - 14 Cinematic text legibility (post-polish): LOCAL radial dark-green scrim (.chapter::before,
   rgba(6,26,22,.62) core, feathered, synced to chapter intensity) + text shadows on en/body/headline/eyebrow
   + counter plate — first-scene clarity preserved, no full-screen re-darkening (see qa.md §10)
-- 15 Deployment: NOT authorized/performed — awaiting owner visual review
+- 15 Bilingual (ar/en): `app/[locale]` SSG ×2, dictionaries `lib/i18n/`, `/`→`/ar`, per-locale
+  `lang`/`dir`/metadata, logical-property CSS + LTR scrim mirroring, locale switch in nav (see qa.md §10)
+- 16 Deployment: NOT authorized/performed — awaiting owner visual review
 
 ## Timestamp map (master 22.0417s)
 ch1 0.000 · ch2 0.182 · ch3 0.364 · ch4 0.545 (SIGNATURE) · ch5 0.727 · ch6 0.911

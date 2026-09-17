@@ -106,7 +106,23 @@ No full-screen re-darkening; no blur/backdrop-filter; video payload untouched.
 | First-scene clarity preserved | PASS — video brighter than pre-polish; readability via local scrim (steady-ch1-1440) |
 | Evidence | `.cinematic-platform/evidence/legibility/*.jpg` — before/after ch1+ch4 at 1440+390, steady ch1, ch5, reduced-motion |
 
-## 10. Known limitations
+## 10. Bilingual pass (ar/en, post-legibility)
+Architecture: `app/[locale]/` (SSG ×2 via `generateStaticParams`, `dynamicParams=false`) · `/` → `/ar` via `next.config` redirects · dictionaries `lib/i18n/{ar,en,index}.ts` (Dict typed from ar) · `CinematicStory`/`LocaleSwitch` client components receive copy via `dict` prop · `lang`/`dir` set per-locale in `[locale]/layout.tsx` + per-locale metadata with `alternates.languages` · nav locale switch (`/ar` ⇄ `/en`, hash preserved, visible on mobile).
+CSS: `direction:rtl` removed from `.nav`/`.chapterShell` (inherited from `html[dir]`); rail/counter/playCtrl/scrollHint/align-engineered converted to logical properties (mirror cleanly in LTR); `[dir='ltr']` scrim ellipse at 28% (follows left-side text); brand pushed via `margin-inline-end:auto` (AR: brand right / menu left — EN mirrored).
+| Check | Result |
+|---|---|
+| typecheck / production build | PASS / PASS — `/ar` + `/en` static (SSG), 109kB first load |
+| `/` redirect | PASS — 307 → `/ar` |
+| `lang`/`dir` per locale | PASS — ar: rtl/ar · en: ltr/en (verified on documentElement) |
+| Scrub @50% / reverse 20% (both locales) | PASS — 12.79s / 5.13s each (geometry untouched) |
+| PLAY JOURNEY (EN) from 40% + wheel cancel | PASS — t→11.28s, scroll follows (y=2853), paused after cancel |
+| Overflow-x 390/1440 × both locales | PASS — 0px |
+| Nav mirroring (user-reported defect) | PASS — fixed via `margin-inline-end:auto`; AR brand right ⇄ EN brand left (evidence ar-nav / en-nav) |
+| Reduced motion (EN) | PASS — no video, playCtrl hidden, ch1 stable |
+| Console | PASS — 0 severe (favicon.ico 404 only, pre-existing) |
+| Evidence | `evidence/bilingual/*.jpg` — ch1+ch4 both locales, EN 390 capabilities, both navs |
+
+## 11. Known limitations
 - Video is 720p (source clips' native resolution)
 - Demo content only — no invented company facts; placeholders clearly marked
 - Production deployment NOT performed — awaiting owner visual approval
