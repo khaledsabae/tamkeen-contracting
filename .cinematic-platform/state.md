@@ -1,7 +1,7 @@
 # TAMKEEN Cinematic Platform — State (final, housekept 2026-09-17)
 
-Branch: `cinematic-v2` — review-ready HEAD `90e9e4e` (pushed; main untouched; no merge, no deploy)
-Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · review-fix regressions: `90e9e4e`
+Branch: `cinematic-v2` — review-ready HEAD `c12034d` (pushed; main untouched; no merge, no deploy)
+Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · review-fix regressions: `90e9e4e` · footprint cleanup: `0ae73d5` · production-footprint cleanup: `c12034d`
 
 ## Phases
 - 0 Baseline: main@30c6762 green (ci/typecheck/build)
