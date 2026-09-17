@@ -134,6 +134,7 @@ export default function Home() {
         <div className="brand">
           <BrandLockup inverted />
         </div>
+        <p className="footerName">شركة تمكين الوسطى للمقاولات</p>
         <p>Demo concept — not an official company profile.</p>
         <span>© {new Date().getFullYear()}</span>
       </footer>

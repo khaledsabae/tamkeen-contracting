@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'تمكين | TAMKEEN Contracting',
-  description: 'عرض تجريبي لشركة تمكين للمقاولات — من الرؤية إلى الواقع.',
+  title: 'شركة تمكين الوسطى للمقاولات | TAMKEEN',
+  description: 'شركة تمكين الوسطى للمقاولات — نحوّل الرؤية إلى واقع قابل للتنفيذ. (عرض تجريبي)',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
