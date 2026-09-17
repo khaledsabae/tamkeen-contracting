@@ -85,3 +85,8 @@
   .pfGrid{grid-template-columns:1fr}
   .portfolio,.approach{padding:80px 7vw}
 }
+
+/* ===== V2 accessibility: visible focus ===== */
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+.nav a:focus-visible,.cta:focus-visible{outline-offset:6px}

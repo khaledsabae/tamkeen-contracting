@@ -42,9 +42,11 @@ export default function CinematicStory() {
   const [ready, setReady] = useState(false);
   const [mediaFailed, setMediaFailed] = useState(false);
   const reduceRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
   }, []);
 
   // Scroll → video currentTime, rAF-throttled, error-safe
@@ -106,11 +108,11 @@ export default function CinematicStory() {
           <video
             ref={el => { videoRef.current = el; }}
             className="masterFilm"
-            src="/media/cinematic-master.mp4"
-            poster="/media/cinematic-poster.webp"
+            src={isMobile ? '/media/cinematic-master-960.mp4' : '/media/cinematic-master.mp4'}
+            poster={isMobile ? '/media/cinematic-poster-mobile.webp' : '/media/cinematic-poster.webp'}
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             aria-hidden="true"
             onCanPlay={() => setReady(true)}
             onError={() => setMediaFailed(true)}
