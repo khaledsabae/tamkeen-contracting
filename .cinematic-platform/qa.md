@@ -120,6 +120,7 @@ CSS: `direction:rtl` removed from `.nav`/`.chapterShell` (inherited from `html[d
 | Nav mirroring (user-reported defect) | PASS — fixed via `margin-inline-end:auto`; AR brand right ⇄ EN brand left (evidence ar-nav / en-nav) |
 | Reduced motion (EN) | PASS — no video, playCtrl hidden, ch1 stable |
 | Console | PASS — 0 severe (favicon.ico 404 only, pre-existing) |
+| EN .en micro-labels (post-58d0b36 cleanup) | PASS — VISION/ENGINEERING/EXECUTION/MEP SYSTEMS/CAPABILITIES/OUTCOME; no wrap, scrub 12.79/5.13s unchanged; mobile playCtrl centering fixed for LTR+RTL ([dir=rtl] translateX override) |
 | Evidence | `evidence/bilingual/*.jpg` — ch1+ch4 both locales, EN 390 capabilities, both navs |
 
 ## 11. Known limitations

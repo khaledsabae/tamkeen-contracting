@@ -100,7 +100,8 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
 .playCtrl .playIco{color:var(--gold);font-size:12px;letter-spacing:0}
 .playCtrl.playing{border-color:var(--gold);background:rgba(215,173,85,.14)}
 .playCtrl.playing .playIco{color:#fff}
-@media(max-width:800px){.playCtrl{inset-inline-start:50%;transform:translateX(50%);bottom:2.6vh;padding:12px 18px}}
+@media(max-width:800px){.playCtrl{inset-inline-end:50%;transform:translateX(50%);bottom:2.6vh;padding:12px 18px}
+[dir='rtl'] .playCtrl{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.playCtrl{display:none}}
 
 /* ===== V2 footer lockup + disabled demo CTA ===== */
