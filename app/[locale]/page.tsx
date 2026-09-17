@@ -72,12 +72,18 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
         <div className="pfGrid">
           {portfolio.plates.map((plate) => (
-            <figure className="plate" key={plate.tag}>
+            <figure className="plate" key={plate.code}>
               <div className="plateArea" aria-hidden="true">
-                <span>{plate.tag}</span>
+                <span className="plateCode">{plate.code}</span>
+                <span className="plateTag">{plate.tag}</span>
               </div>
               <figcaption>
                 <b>{plate.title}</b>
+                <p className="plateMeta">
+                  <span>{plate.location}</span>
+                  <span>{plate.year}</span>
+                  <span>{plate.area}</span>
+                </p>
                 <small>{portfolio.placeholder}</small>
               </figcaption>
             </figure>

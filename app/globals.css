@@ -66,15 +66,17 @@
 .pfHead .demoNote{max-width:520px;line-height:1.85;color:#9fb0a9}
 .pfGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
 .plate{margin:0}
-.plateArea{aspect-ratio:4/3;border:1px solid rgba(215,173,85,.28);display:grid;place-items:center;
+.plateArea{aspect-ratio:4/3;border:1px solid rgba(215,173,85,.28);display:grid;place-items:center;position:relative;
   background:
     linear-gradient(135deg,rgba(215,173,85,.06) 1px,transparent 1px),
     linear-gradient(225deg,rgba(215,173,85,.06) 1px,transparent 1px),
     #0b2a22;
   background-size:28px 28px,28px 28px,auto}
-.plateArea span{font:500 10px Inter;letter-spacing:.2em;color:rgba(215,173,85,.55)}
+.plateCode{font:300 34px Inter;letter-spacing:.08em;color:rgba(215,173,85,.5)}
+.plateTag{position:absolute;bottom:12px;inset-inline-start:14px;font:500 10px Inter;letter-spacing:.2em;color:rgba(215,173,85,.55)}
 .plate figcaption{padding:16px 2px;border-bottom:1px solid rgba(255,255,255,.1)}
 .plate b{display:block;font-weight:500;font-size:17px}
+.plateMeta{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 10px;font-size:13px;color:#9fb0a9;line-height:1.7}
 .plate small{font:500 8.5px Inter;letter-spacing:.16em;color:#7d8f87}
 @media(max-width:1000px){.approachTrack{grid-template-columns:1fr 1fr;row-gap:44px}}
 @media(max-width:800px){

@@ -86,7 +86,9 @@ Cinematic text legibility pass (LOCAL chapter scrim + text shadows + counter pla
 
 ## 8. Preview
 - Tunnel: https://mysterious-worlds-supervisors-disposition.trycloudflare.com
-  (temporary — dies if the laptop sleeps; serves production build of the bilingual pass + micro-label cleanup, HEAD `a8a6d6f`)
+  (temporary — dies if the laptop sleeps; serves the latest build (see git log). Portfolio now carries illustrative sample
+  projects (PRJ-01..03, owner-authorized) replacing empty placeholders — clearly marked
+  as samples until approved TAMKEEN data arrives.)
 
 ## 9. Cinematic text legibility pass (post-`de142bd`)
 Treatment: `.chapter::before` radial ellipse `rgba(6,26,22,.62) 0% → .42 55% → transparent 80%`
