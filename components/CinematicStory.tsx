@@ -4,9 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import BrandLockup from '@/components/BrandLockup';
 
 /**
- * CinematicStory V2 — ONE continuous master video scrubbed by scroll.
- * Real timestamp map from the actual master (22.0417s @ 24fps, keyframes 0.5s).
- * Text stays real HTML above the video. Signature moment: construction→MEP.
+ * CinematicStory V2.1 — performance sprint.
+ * - Poster-first: video mounts only after device classification + idle point.
+ * - No desktop video download on mobile (source decided before mount).
+ * - Scrub capped at ~24Hz, quantized to real frame intervals (video is 24fps).
+ * - React state only for chapter changes; scroll progress lives in refs + CSS var.
+ * - PLAY JOURNEY = native video.play(); page scroll follows currentTime (sequential
+ *   decode, no seek storm). Manual input cancels, pauses video, returns to scrub.
  */
 
 const CHAPTERS = [
@@ -18,91 +22,55 @@ const CHAPTERS = [
   { n: '06', kicker: 'النتيجة', title: 'من الرؤية إلى الواقع', en: 'FROM VISION TO REALITY', body: 'نهاية الرحلة ليست مبنى فقط، بل أصلٌ صُمم ونُفذ ليصمد.', align: 'center' },
 ] as const;
 
-// Real landmarks from the master video (22.0417s total):
 const MASTER_DURATION = 22.0417;
-const LANDMARKS = [0, 4.01, 8.02, 12.03, 16.04, 20.07]; // chapter START times in seconds
-const SIGNATURE_T = 12.03; // construction → MEP (chapter 4 start)
+const VIDEO_FPS = 24;
+const FRAME = 1 / VIDEO_FPS;
+const SEEK_MIN_INTERVAL = 1000 / 24; // manual scrub seeks capped at 24Hz
+const LANDMARKS = [0, 4.01, 8.02, 12.03, 16.04, 20.07];
 
-// Normalized progress value for a given video time
 const pOf = (t: number) => t / MASTER_DURATION;
-// Chapter i is "settled" between enter and exit; text fully visible in the middle range
-const chWindow = (i: number) => {
-  const start = pOf(LANDMARKS[i]);
-  const end = i === 5 ? 1 : pOf(LANDMARKS[i + 1]);
-  return { start, end };
-};
+const WINDOWS = CHAPTERS.map((_, i) => ({
+  start: pOf(LANDMARKS[i]),
+  end: i === 5 ? 1 : pOf(LANDMARKS[i + 1]),
+}));
 
-const WINDOWS = CHAPTERS.map((_, i) => chWindow(i));
+// Compact masters (generated in the perf sprint; see asset-manifest)
+const DESKTOP_SRC = '/media/cinematic-master-1080-compact.mp4';
+const MOBILE_SRC = '/media/cinematic-master-720-compact.mp4';
 
 export default function CinematicStory() {
   const wrap = useRef<HTMLElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const raf = useRef<number | null>(null);
-  const metaReady = useRef(false);
+  const lastSeek = useRef(0);
+  const lastSetTime = useRef(-1);
+  const activeChapterRef = useRef(0);
+  const autoPlayingRef = useRef(false);
   const autoRaf = useRef<number | null>(null);
-  const autoStop = useRef(false);
+  const progressRef = useRef(0); // scroll progress in a ref, not state
   const [autoPlaying, setAutoPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [ready, setReady] = useState(false);
   const [mediaFailed, setMediaFailed] = useState(false);
+  const [mountVideo, setMountVideo] = useState(false); // poster-first
+  const [chapter, setChapter] = useState(0); // React state ONLY on chapter change
+  const [device, setDevice] = useState<'mobile' | 'desktop' | null>(null); // null = unclassified
   const reduceRef = useRef(false);
-  const [isMobile, setIsMobile] = useState(false);
 
+  // Device classification BEFORE any video source is decided
   useEffect(() => {
     reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
+    setDevice(window.matchMedia('(max-width: 1024px)').matches ? 'mobile' : 'desktop');
+    if (!reduceRef.current) {
+      // Attach the video after the shell is interactive (idle), never during first paint
+      const go = () => setMountVideo(true);
+      if ('requestIdleCallback' in window) {
+        (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(go);
+      } else {
+        setTimeout(go, 1200);
+      }
+    }
   }, []);
 
-  // ===== Auto-play journey: smooth programmatic scroll through the whole section.
-  // Duration matches the master video (22.04s) so visuals and text stay in sync.
-  const stopAuto = () => {
-    autoStop.current = true;
-    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
-    autoRaf.current = null;
-    setAutoPlaying(false);
-  };
-  const startAuto = () => {
-    if (!wrap.current || autoPlaying) return;
-    autoStop.current = false;
-    setAutoPlaying(true);
-    const total = wrap.current.offsetHeight - window.innerHeight;
-    // Absolute offset of the section — robust even if content is added above it later
-    const sectionTop = window.scrollY + wrap.current.getBoundingClientRect().top;
-    const from = Math.max(sectionTop, Math.min(sectionTop + total, window.scrollY));
-    const target = sectionTop + total; // ride to the end of the journey
-    const dist = Math.max(1, target - from);
-    const duration = Math.max(8000, (dist / Math.max(1, total)) * MASTER_DURATION * 1000 * 1.15);
-    const t0 = performance.now();
-    const ease = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2); // easeInOut
-    // One rAF loop with real timing:
-    autoRaf.current = requestAnimationFrame(function frame(now: number) {
-      if (autoStop.current) return;
-      const k = Math.min(1, (now - t0) / duration);
-      window.scrollTo({ top: from + dist * ease(k), behavior: 'instant' as ScrollBehavior });
-      if (k < 1) autoRaf.current = requestAnimationFrame(frame);
-      else setAutoPlaying(false);
-    });
-  };
-  // Manual input cancels auto-play (wheel, touch, keys)
-  useEffect(() => {
-    if (!autoPlaying) return;
-    const cancel = () => stopAuto();
-    window.addEventListener('wheel', cancel, { passive: true });
-    window.addEventListener('touchstart', cancel, { passive: true });
-    window.addEventListener('keydown', cancel);
-    return () => {
-      window.removeEventListener('wheel', cancel);
-      window.removeEventListener('touchstart', cancel);
-      window.removeEventListener('keydown', cancel);
-    };
-  }, [autoPlaying]);
-  // Cancel any in-flight auto-scroll animation when the component unmounts
-  useEffect(() => () => {
-    autoStop.current = true;
-    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
-  }, []);
-
-  // Scroll → video currentTime, rAF-throttled, error-safe
+  // Manual scrub: 24Hz cap + frame quantization + refs/CSS var (no setState per frame)
   useEffect(() => {
     const update = () => {
       raf.current = null;
@@ -110,18 +78,32 @@ export default function CinematicStory() {
       const r = wrap.current.getBoundingClientRect();
       const total = wrap.current.offsetHeight - window.innerHeight;
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, total)));
-      setProgress(p);
+      progressRef.current = p;
+      // CSS custom property drives the rail without React re-render
+      document.documentElement.style.setProperty('--journey-progress', p.toFixed(4));
       if (reduceRef.current) return;
+
+      let ch = 0;
+      for (let i = 0; i < WINDOWS.length; i++) if (p >= WINDOWS[i].start) ch = i;
+      if (ch !== activeChapterRef.current) {
+        activeChapterRef.current = ch;
+        setChapter(ch); // React re-render ONLY on chapter change
+      }
+      if (autoPlayingRef.current) return; // native playback drives scroll; no seeking
 
       const v = videoRef.current;
       if (!v || v.readyState < 1) return;
-      const target = Math.min(MASTER_DURATION - 0.05, p * MASTER_DURATION);
-      if (Math.abs(v.currentTime - target) > 0.016) {
-        try {
-          v.currentTime = target;
-        } catch {
-          /* seek errors are non-fatal */
-        }
+      const now = performance.now();
+      if (now - lastSeek.current < SEEK_MIN_INTERVAL) return; // 24Hz cap
+      lastSeek.current = now;
+      // Quantize target to actual video frame intervals
+      const target = Math.min(
+        MASTER_DURATION - FRAME,
+        Math.round((p * MASTER_DURATION) / FRAME) * FRAME,
+      );
+      if (Math.abs(v.currentTime - target) >= FRAME * 0.9 && target !== lastSetTime.current) {
+        lastSetTime.current = target;
+        try { v.currentTime = target; } catch { /* seek errors are non-fatal */ }
       }
     };
     const onScroll = () => {
@@ -137,44 +119,90 @@ export default function CinematicStory() {
     };
   }, []);
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  // ===== PLAY JOURNEY v2: native playback; page scroll follows currentTime =====
+  const stopAuto = () => {
+    autoPlayingRef.current = false;
+    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
+    autoRaf.current = null;
+    setAutoPlaying(false);
+    const v = videoRef.current;
+    if (v) { try { v.pause(); } catch {} }
+  };
+  const startAuto = () => {
+    const v = videoRef.current;
+    if (!v || !wrap.current || autoPlayingRef.current) return;
+    autoPlayingRef.current = true;
+    setAutoPlaying(true);
+    // Sync scroll to the CURRENT video time ONCE, then hand off to native decode
+    const total = wrap.current.offsetHeight - window.innerHeight;
+    const sectionTop = window.scrollY + wrap.current.getBoundingClientRect().top;
+    const from = Math.max(sectionTop, Math.min(sectionTop + total, window.scrollY));
+    const p0 = Math.max(0, Math.min(1, (window.scrollY - from) / Math.max(1, total)));
+    try { v.currentTime = Math.min(MASTER_DURATION - FRAME, p0 * MASTER_DURATION); } catch {}
+    const drive = () => {
+      const p = Math.min(0.999, v.currentTime / MASTER_DURATION);
+      const y = from + p * total;
+      if (Math.abs(window.scrollY - y) > 1.5) {
+        window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior });
+      }
+      document.documentElement.style.setProperty('--journey-progress', p.toFixed(4));
+      let ch = 0;
+      for (let i = 0; i < WINDOWS.length; i++) if (p >= WINDOWS[i].start) ch = i;
+      if (ch !== activeChapterRef.current) {
+        activeChapterRef.current = ch;
+        setChapter(ch);
+      }
+      if (v.ended || v.paused) { stopAuto(); return; }
+      autoRaf.current = requestAnimationFrame(drive);
+    };
+    v.play().then(() => { autoRaf.current = requestAnimationFrame(drive); }).catch(() => stopAuto());
+  };
+  // Manual input cancels playback, pauses video, returns to scrub mode
+  useEffect(() => {
+    if (!autoPlaying) return;
+    const cancel = () => stopAuto();
+    window.addEventListener('wheel', cancel, { passive: true });
+    window.addEventListener('touchstart', cancel, { passive: true });
+    window.addEventListener('keydown', cancel);
+    return () => {
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchstart', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
+  }, [autoPlaying]);
+  // Cancel any in-flight animation when the component unmounts
+  useEffect(() => () => {
+    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
+  }, []);
 
-  // Active chapter + per-chapter visual weight from progress
-  let active = 0;
-  for (let i = 0; i < WINDOWS.length; i++) {
-    if (progress >= WINDOWS[i].start) active = i;
-  }
-  const w = WINDOWS[active];
-  const local = Math.max(0, Math.min(1, (progress - w.start) / Math.max(1e-6, w.end - w.start)));
-  // Text intensity: fade in during first 25% of window, hold, fade out in last 15%
+  const w = WINDOWS[chapter];
+  const local = Math.max(0, Math.min(1, (progressRef.current - w.start) / Math.max(1e-6, w.end - w.start)));
   const tIn = Math.min(1, local / 0.25);
   const tOut = Math.min(1, (1 - local) / 0.15);
   const intensity = Math.max(0, Math.min(1, Math.min(tIn, tOut)));
-  const signature = progress >= pOf(SIGNATURE_T) && progress < pOf(SIGNATURE_T) + 0.09;
-
-  const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduced = reduceRef.current;
+  const src = device === 'mobile' ? MOBILE_SRC : DESKTOP_SRC;
 
   return (
     <section ref={wrap} className="cinematic" id="story">
       <div className="stage">
-        {!reduced && !mediaFailed && (
+        {mountVideo && device !== null && !reduced && !mediaFailed && (
           <video
             ref={el => { videoRef.current = el; }}
             className="masterFilm"
-            src={isMobile ? '/media/cinematic-master-960.mp4' : '/media/cinematic-master.mp4'}
-            poster={isMobile ? '/media/cinematic-poster-mobile.webp' : '/media/cinematic-poster.webp'}
+            src={src}
+            poster={device === 'mobile' ? '/media/cinematic-poster-mobile.webp' : '/media/cinematic-poster.webp'}
             muted
             playsInline
             preload="metadata"
             aria-hidden="true"
-            onCanPlay={() => setReady(true)}
             onError={() => setMediaFailed(true)}
           />
         )}
         <div className={`mediaFallback ${mediaFailed || reduced ? 'visible' : ''}`} aria-hidden="true" />
         <div className="shade" />
-        {signature && <div className="techGrid" aria-hidden="true" />}
-        <div className="grain" />
+        {chapter === 3 && <div className="techGrid" aria-hidden="true" />}
+        <div className="grain grainLight" />
 
         <header className="nav">
           <a className="brand" href="#story" aria-label="تمكين الرئيسية">
@@ -190,8 +218,8 @@ export default function CinematicStory() {
 
         <div className="chapterShell">
           {CHAPTERS.map((c, i) => {
-            const I = intensity; // only active chapter animates
-            const isActive = i === active;
+            const isActive = i === chapter;
+            const I = isActive ? intensity : 0;
             return (
               <article
                 key={c.n}
@@ -210,8 +238,8 @@ export default function CinematicStory() {
           })}
         </div>
 
-        <div className="rail" aria-hidden="true"><span style={{ height: `${progress * 100}%` }} /></div>
-        <div className="counter" aria-hidden="true"><b>0{active + 1}</b><i />06</div>
+        <div className="rail" aria-hidden="true"><span className="railFill" /></div>
+        <div className="counter" aria-hidden="true"><b>0{chapter + 1}</b><i />06</div>
         <button
           type="button"
           className={`playCtrl ${autoPlaying ? 'playing' : ''}`}
@@ -225,4 +253,3 @@ export default function CinematicStory() {
     </section>
   );
 }
-
