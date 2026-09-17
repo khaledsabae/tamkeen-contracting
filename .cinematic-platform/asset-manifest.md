@@ -16,3 +16,8 @@
 
 Naming rule kept: stable semantic names; no `final2.png`-style strays.
 Archived originals live at `tamkeen-contracting-source-media/` (non-public) and in git history.
+## Portfolio plates (added 2026-09-17, owner-authorized sample projects)
+- public/media/portfolio/residential.jpg — 800x600 q70 ~96KB (Unsplash, free license)
+- public/media/portfolio/commercial.jpg — 800x600 q70 ~113KB (Unsplash, free license)
+- public/media/portfolio/infrastructure.jpg — 800x600 q70 ~92KB (Unsplash, free license)
+- loaded lazy (loading=lazy), below the fold — zero impact on first paint / video payload

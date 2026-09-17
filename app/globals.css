@@ -66,14 +66,17 @@
 .pfHead .demoNote{max-width:520px;line-height:1.85;color:#9fb0a9}
 .pfGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
 .plate{margin:0}
-.plateArea{aspect-ratio:4/3;border:1px solid rgba(215,173,85,.28);display:grid;place-items:center;position:relative;
-  background:
-    linear-gradient(135deg,rgba(215,173,85,.06) 1px,transparent 1px),
-    linear-gradient(225deg,rgba(215,173,85,.06) 1px,transparent 1px),
-    #0b2a22;
-  background-size:28px 28px,28px 28px,auto}
-.plateCode{font:300 34px Inter;letter-spacing:.08em;color:rgba(215,173,85,.5)}
-.plateTag{position:absolute;bottom:12px;inset-inline-start:14px;font:500 10px Inter;letter-spacing:.2em;color:rgba(215,173,85,.55)}
+.plateArea{aspect-ratio:4/3;border:1px solid rgba(215,173,85,.28);display:grid;place-items:center;position:relative;overflow:hidden;
+  background:#0b2a22}
+.plateArea img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:saturate(.82) brightness(.88);transition:transform .5s ease,filter .4s ease}
+.plate:hover .plateArea img{transform:scale(1.04);filter:saturate(.95) brightness(.95)}
+.plateArea::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(6,26,22,.18) 0%,rgba(6,26,22,0) 40%,rgba(6,26,22,.55) 100%)}
+.plateCode{position:relative;z-index:1;font:300 34px Inter;letter-spacing:.08em;color:rgba(255,255,255,.85);
+  text-shadow:0 1px 10px rgba(6,26,22,.7)}
+.plateTag{position:absolute;bottom:12px;inset-inline-start:14px;z-index:1;font:500 10px Inter;letter-spacing:.2em;color:rgba(215,173,85,.9);
+  text-shadow:0 1px 6px rgba(6,26,22,.7)}
 .plate figcaption{padding:16px 2px;border-bottom:1px solid rgba(255,255,255,.1)}
 .plate b{display:block;font-weight:500;font-size:17px}
 .plateMeta{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 10px;font-size:13px;color:#9fb0a9;line-height:1.7}

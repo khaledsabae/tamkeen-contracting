@@ -73,9 +73,9 @@ export const en: Dict = {
     aria: 'Sample projects',
     placeholder: 'Sample project — presentation until TAMKEEN data is approved',
     plates: [
-      { code: 'PRJ-01', title: 'Integrated Residential Compound', tag: 'RESIDENTIAL COMPOUND', location: 'Riyadh — Al Yasmin District', year: '2024', area: '18,500 m²' },
-      { code: 'PRJ-02', title: 'Commercial & Office Building', tag: 'COMMERCIAL & OFFICE', location: 'Riyadh — King Abdullah Road', year: '2023', area: '9,200 m²' },
-      { code: 'PRJ-03', title: 'Infrastructure & Roads Works', tag: 'INFRASTRUCTURE WORKS', location: 'Al Kharj — Al Kharj City', year: '2022', area: '4.5 km' },
+      { img: '/media/portfolio/residential.jpg', code: 'PRJ-01', title: 'Integrated Residential Compound', tag: 'RESIDENTIAL COMPOUND', location: 'Riyadh — Al Yasmin District', year: '2024', area: '18,500 m²' },
+      { img: '/media/portfolio/commercial.jpg', code: 'PRJ-02', title: 'Commercial & Office Building', tag: 'COMMERCIAL & OFFICE', location: 'Riyadh — King Abdullah Road', year: '2023', area: '9,200 m²' },
+      { img: '/media/portfolio/infrastructure.jpg', code: 'PRJ-03', title: 'Infrastructure & Roads Works', tag: 'INFRASTRUCTURE WORKS', location: 'Al Kharj — Al Kharj City', year: '2022', area: '4.5 km' },
     ],
   },
   contact: {

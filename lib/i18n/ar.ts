@@ -71,9 +71,9 @@ export const ar = {
     aria: 'المشاريع النموذجية',
     placeholder: 'مشروع نموذجي — للعرض حتى اعتماد بيانات تمكين',
     plates: [
-      { code: 'PRJ-01', title: 'مجمع سكني متكامل', tag: 'RESIDENTIAL COMPOUND', location: 'الرياض — حي الياسمين', year: '2024', area: '18,500 م²' },
-      { code: 'PRJ-02', title: 'مبنى إداري وتجاري', tag: 'COMMERCIAL & OFFICE', location: 'الرياض — طريق الملك عبدالله', year: '2023', area: '9,200 م²' },
-      { code: 'PRJ-03', title: 'أعمال بنية تحتية وطرق', tag: 'INFRASTRUCTURE WORKS', location: 'الخرج — مدينة الخرج', year: '2022', area: '4.5 كم' },
+      { img: '/media/portfolio/residential.jpg', code: 'PRJ-01', title: 'مجمع سكني متكامل', tag: 'RESIDENTIAL COMPOUND', location: 'الرياض — حي الياسمين', year: '2024', area: '18,500 م²' },
+      { img: '/media/portfolio/commercial.jpg', code: 'PRJ-02', title: 'مبنى إداري وتجاري', tag: 'COMMERCIAL & OFFICE', location: 'الرياض — طريق الملك عبدالله', year: '2023', area: '9,200 م²' },
+      { img: '/media/portfolio/infrastructure.jpg', code: 'PRJ-03', title: 'أعمال بنية تحتية وطرق', tag: 'INFRASTRUCTURE WORKS', location: 'الخرج — مدينة الخرج', year: '2022', area: '4.5 كم' },
     ],
   },
   contact: {
