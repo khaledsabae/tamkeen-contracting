@@ -1,4 +1,5 @@
 import CinematicStory from '@/components/CinematicStory';
+import BrandLockup from '@/components/BrandLockup';
 
 /**
  * Cinematic V2 — post-journey sections.
@@ -116,14 +117,22 @@ export default function Home() {
           <p>
             هذه نسخة عرض أولية. بيانات التواصل والعنوان والسجل والمشاريع والعملاء ستُضاف بعد اعتمادها من تمكين.
           </p>
-          <a href="mailto:hello@example.com">طلب عرض مشروع <span>←</span></a>
+          <button
+            type="button"
+            className="cta ctaDisabled"
+            disabled
+            aria-disabled="true"
+            title="سيُفعَّل عند استلام بيانات التواصل الرسمية من تمكين"
+          >
+            طلب عرض مشروع <span>←</span>
+            <small className="ctaDemoNote">DEMO — AWAITING OFFICIAL CONTACT DATA</small>
+          </button>
         </div>
       </section>
 
       <footer>
         <div className="brand">
-          <span className="mark">ت</span>
-          <span><b>تمكين</b><small>TAMKEEN</small></span>
+          <BrandLockup inverted />
         </div>
         <p>Demo concept — not an official company profile.</p>
         <span>© {new Date().getFullYear()}</span>

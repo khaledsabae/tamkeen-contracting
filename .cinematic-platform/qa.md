@@ -1,7 +1,8 @@
 # TAMKEEN Cinematic V2 — QA Evidence (final, housekept 2026-09-17)
 
 > Single source of truth. The old "Pending (next milestones)" section was removed —
-> every item in it is now verified below. Branch `cinematic-v2` @ `04d4407`.
+> every item in it is now verified below.
+> Functional implementation commit: `04d4407` — review-ready HEAD: `a8ea164`.
 
 ## 1. Baseline & build
 | Check | Result | Evidence |

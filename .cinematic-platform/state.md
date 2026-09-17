@@ -1,6 +1,7 @@
 # TAMKEEN Cinematic Platform — State (final, housekept 2026-09-17)
 
-Branch: `cinematic-v2` @ `04d4407` (pushed; main untouched; no merge, no deploy)
+Branch: `cinematic-v2` — review-ready HEAD `a8ea164` (pushed; main untouched; no merge, no deploy)
+Functional implementation commit: `04d4407` (V2 core + review-note fixes; docs follow in later commits)
 
 ## Phases
 - 0 Baseline: main@30c6762 green (ci/typecheck/build)

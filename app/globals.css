@@ -102,3 +102,11 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
 .playCtrl.playing .playIco{color:#fff}
 @media(max-width:800px){.playCtrl{right:50%;transform:translateX(50%);bottom:2.6vh;padding:12px 18px}}
 @media(prefers-reduced-motion:reduce){.playCtrl{display:none}}
+
+/* ===== V2 footer lockup + disabled demo CTA ===== */
+.lockup.inverted b{color:#fff}
+.ctaDisabled{background:none;border:none;border-bottom:1px solid rgba(6,26,22,.55);
+  padding:14px 0;margin-top:18px;color:rgba(6,26,22,.55);cursor:not-allowed;
+  display:inline-flex;gap:22px;align-items:center;font:inherit;text-align:right}
+.ctaDisabled .ctaDemoNote{display:block;font:500 8.5px Inter;letter-spacing:.16em;color:#5f481e;width:100%}
+.ctaDisabled span{color:rgba(6,26,22,.4);font-size:20px}
