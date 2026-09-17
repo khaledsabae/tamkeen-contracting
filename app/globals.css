@@ -27,3 +27,61 @@
   .masterFilm{display:none}
   .techGrid{display:none}
 }
+
+/* ===== V2 post-cinematic sections ===== */
+.demoNote{color:#8fa198;font-size:13px;border-inline-start:2px solid rgba(215,173,85,.5);padding-inline-start:12px}
+/* Capabilities → ledger rows (technical table feel, NOT cards) */
+.capabilities .ledger{display:block}
+.capabilities .row{display:grid;grid-template-columns:70px 1fr 40px;gap:26px;align-items:start;
+  padding:34px 0;border-top:1px solid rgba(255,255,255,.12);position:relative}
+.capabilities .row::after{content:"";position:absolute;inset-inline:0;top:-1px;height:1px;
+  background:linear-gradient(90deg,var(--gold),transparent 40%);opacity:0;transition:opacity .3s}
+.capabilities .row:hover::after{opacity:1}
+.capabilities .idx{font:500 13px Inter;color:var(--gold);border:1px solid rgba(215,173,85,.4);
+  width:44px;height:44px;display:grid;place-items:center}
+.capabilities small{font:600 9px Inter;letter-spacing:.22em;color:#8ea098}
+.capabilities h3{font-size:30px;margin:8px 0;font-weight:500}
+.capabilities p{margin:0;color:#c3cdc8;line-height:1.85;max-width:560px}
+.capabilities .rowArrow{color:var(--gold);font-size:20px;opacity:.5;transition:.25s}
+.capabilities .row:hover .rowArrow{opacity:1;transform:translate(-4px,-4px)}
+/* NOTE: capabilities section is light (paper) — adapt row colors for paper bg */
+.capabilities .row{border-top-color:#c8c7c0}
+.capabilities .idx{border-color:rgba(154,116,48,.5);color:#9a7430}
+.capabilities p{color:#63706b}
+/* Approach — lifecycle track with joints */
+.approach{background:#061611;padding:110px 8vw 130px;position:relative}
+.eyebrowLine{font:600 10px Inter;letter-spacing:.26em;color:var(--gold)}
+.approachTrack{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px;position:relative}
+.stage2{position:relative;padding:0 26px 0 0;border-inline-start:1px solid rgba(215,173,85,.25);padding-inline-start:26px}
+.stage2 .stageNo{font:300 52px Inter;color:rgba(215,173,85,.28);display:block;line-height:1}
+.stage2 .stageEn{font:600 9px Inter;letter-spacing:.26em;color:var(--gold);display:block;margin:14px 0 8px}
+.stage2 h3{font-size:24px;margin:0 0 10px;font-weight:500}
+.stage2 p{color:#9fb0a9;font-size:14.5px;line-height:1.85;margin:0}
+.joint{position:absolute;top:26px;inset-inline-start:-7px;width:13px;height:13px;
+  border:1px solid var(--gold);background:#061611;transform:rotate(45deg)}
+/* Portfolio — architectural plates, placeholders */
+.portfolio{background:#09231d;padding:110px 8vw}
+.pfHead span{font:600 10px Inter;letter-spacing:.24em;color:var(--gold)}
+.pfHead h2{font-size:clamp(40px,4.6vw,64px);font-weight:500;margin:18px 0;line-height:1.15}
+.pfHead .demoNote{max-width:520px;line-height:1.85;color:#9fb0a9}
+.pfGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
+.plate{margin:0}
+.plateArea{aspect-ratio:4/3;border:1px solid rgba(215,173,85,.28);display:grid;place-items:center;
+  background:
+    linear-gradient(135deg,rgba(215,173,85,.06) 1px,transparent 1px),
+    linear-gradient(225deg,rgba(215,173,85,.06) 1px,transparent 1px),
+    #0b2a22;
+  background-size:28px 28px,28px 28px,auto}
+.plateArea span{font:500 10px Inter;letter-spacing:.2em;color:rgba(215,173,85,.55)}
+.plate figcaption{padding:16px 2px;border-bottom:1px solid rgba(255,255,255,.1)}
+.plate b{display:block;font-weight:500;font-size:17px}
+.plate small{font:500 8.5px Inter;letter-spacing:.16em;color:#7d8f87}
+@media(max-width:1000px){.approachTrack{grid-template-columns:1fr 1fr;row-gap:44px}}
+@media(max-width:800px){
+  .capabilities .row{grid-template-columns:44px 1fr;gap:16px}
+  .capabilities .rowArrow{display:none}
+  .capabilities h3{font-size:23px}
+  .approachTrack{grid-template-columns:1fr;row-gap:38px}
+  .pfGrid{grid-template-columns:1fr}
+  .portfolio,.approach{padding:80px 7vw}
+}
