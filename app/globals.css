@@ -119,3 +119,6 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
   .grainLight{display:none} /* expensive fractal noise off on mobile */
   .shade{background:linear-gradient(90deg,rgba(3,13,11,.7) 0%,rgba(3,13,11,.35) 40%,rgba(3,13,11,.05) 75%),linear-gradient(0deg,rgba(2,9,7,.55),transparent 40%)}
 }
+
+/* ===== V2.2 continuous chapter intensity via CSS vars ===== */
+.chapter.active{opacity:var(--chapter-intensity,1);transform:translateY(var(--chapter-shift,0px))}

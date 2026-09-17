@@ -38,6 +38,13 @@ const WINDOWS = CHAPTERS.map((_, i) => ({
 const DESKTOP_SRC = '/media/cinematic-master-1080-compact.mp4';
 const MOBILE_SRC = '/media/cinematic-master-720-compact.mp4';
 
+
+// Chapter-local progress → continuous intensity (fade in 25%, fade out 15%)
+const intensityCalc = (local: number) =>
+  Math.max(0, Math.min(1, Math.min(local / 0.25, (1 - local) / 0.15)));
+// Keep 3-decimal stability for CSS var writes
+const intensity3 = (x: number) => Math.round(x * 1000) / 1000;
+
 export default function CinematicStory() {
   const wrap = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -89,6 +96,12 @@ export default function CinematicStory() {
         activeChapterRef.current = ch;
         setChapter(ch); // React re-render ONLY on chapter change
       }
+      // Continuous text intensity via CSS var (fade in 25% / out 15% of the window)
+      const w = WINDOWS[ch];
+      const local = Math.max(0, Math.min(1, (p - w.start) / Math.max(1e-6, w.end - w.start)));
+      const inten = intensityCalc(local);
+      document.documentElement.style.setProperty('--chapter-intensity', inten.toFixed(3));
+      document.documentElement.style.setProperty('--chapter-shift', ((1 - inten) * 26).toFixed(1) + 'px');
       if (autoPlayingRef.current) return; // native playback drives scroll; no seeking
 
       const v = videoRef.current;
@@ -133,15 +146,17 @@ export default function CinematicStory() {
     if (!v || !wrap.current || autoPlayingRef.current) return;
     autoPlayingRef.current = true;
     setAutoPlaying(true);
-    // Sync scroll to the CURRENT video time ONCE, then hand off to native decode
+    // Absolute section geometry — independent of where the user currently is
     const total = wrap.current.offsetHeight - window.innerHeight;
     const sectionTop = window.scrollY + wrap.current.getBoundingClientRect().top;
-    const from = Math.max(sectionTop, Math.min(sectionTop + total, window.scrollY));
-    const p0 = Math.max(0, Math.min(1, (window.scrollY - from) / Math.max(1, total)));
+    // Clamp the CURRENT scroll position inside the section, then derive p0
+    const currentY = Math.max(sectionTop, Math.min(sectionTop + total, window.scrollY));
+    const p0 = Math.max(0, Math.min(1, (currentY - sectionTop) / Math.max(1, total)));
+    // Jump the video to the matching timestamp ONCE, then native decode takes over
     try { v.currentTime = Math.min(MASTER_DURATION - FRAME, p0 * MASTER_DURATION); } catch {}
     const drive = () => {
       const p = Math.min(0.999, v.currentTime / MASTER_DURATION);
-      const y = from + p * total;
+      const y = sectionTop + p * total;
       if (Math.abs(window.scrollY - y) > 1.5) {
         window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior });
       }
@@ -152,6 +167,11 @@ export default function CinematicStory() {
         activeChapterRef.current = ch;
         setChapter(ch);
       }
+      const wv = WINDOWS[ch];
+      const local = Math.max(0, Math.min(1, (p - wv.start) / Math.max(1e-6, wv.end - wv.start)));
+      const inten = intensityCalc(local);
+      document.documentElement.style.setProperty('--chapter-intensity', inten.toFixed(3));
+      document.documentElement.style.setProperty('--chapter-shift', ((1 - inten) * 26).toFixed(1) + 'px');
       if (v.ended || v.paused) { stopAuto(); return; }
       autoRaf.current = requestAnimationFrame(drive);
     };
@@ -175,11 +195,6 @@ export default function CinematicStory() {
     if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
   }, []);
 
-  const w = WINDOWS[chapter];
-  const local = Math.max(0, Math.min(1, (progressRef.current - w.start) / Math.max(1e-6, w.end - w.start)));
-  const tIn = Math.min(1, local / 0.25);
-  const tOut = Math.min(1, (1 - local) / 0.15);
-  const intensity = Math.max(0, Math.min(1, Math.min(tIn, tOut)));
   const reduced = reduceRef.current;
   const src = device === 'mobile' ? MOBILE_SRC : DESKTOP_SRC;
 
@@ -219,12 +234,10 @@ export default function CinematicStory() {
         <div className="chapterShell">
           {CHAPTERS.map((c, i) => {
             const isActive = i === chapter;
-            const I = isActive ? intensity : 0;
             return (
               <article
                 key={c.n}
                 className={`chapter ${c.align} ${isActive ? 'active' : ''}`}
-                style={isActive ? { opacity: I, transform: `translateY(${(1 - I) * 26}px)` } : undefined}
                 aria-hidden={!isActive}
               >
                 <div className="eyebrow"><span>{c.n}</span>{c.kicker}</div>
