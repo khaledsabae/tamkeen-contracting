@@ -84,7 +84,7 @@
 
 ## 8. Preview
 - Tunnel: https://evanescence-supporting-encounter-outstanding.trycloudflare.com
-  (temporary — dies if the laptop sleeps; serves build 04d4407 with the play button)
+  (temporary — dies if the laptop sleeps; serves runtime build `c12034d` with the play button)
 
 ## 9. Known limitations
 - Video is 720p (source clips' native resolution)
