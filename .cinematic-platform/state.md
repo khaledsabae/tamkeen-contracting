@@ -24,7 +24,8 @@ ch1 0.000 · ch2 0.182 · ch3 0.364 · ch4 0.545 (SIGNATURE) · ch5 0.727 · ch6
 - public/media/cinematic-master-desktop-compact.mp4 — 22.04s 1280x720 CRF24 GOP0.5 faststart 10.09MB (desktop)
 - public/media/cinematic-master-mobile-compact.mp4 — same timeline 854w CRF26 4.47MB (≤1024px)
 - posters: cinematic-poster.webp (107KB) / cinematic-poster-mobile.webp (39KB)
-- (full-quality source cinematic-master.mp4 20.6MB kept in repo history; superseded 960w variant removed)
+- public/media contains ONLY serving assets (15.1MB total): 2 compact masters + 2 posters
+- originals (5 clips) + full-quality master + superseded 960 archived at tamkeen-contracting-source-media/ (non-public, 48MB)
 
 ## Next step (owner)
 Visual review via tunnel → approve → merge cinematic-v2 to main → production deploy (explicit order only).
