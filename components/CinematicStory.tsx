@@ -37,7 +37,6 @@ export default function CinematicStory() {
   const wrap = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const raf = useRef<number | null>(null);
-  const seeking = useRef<number | null>(null);
   const metaReady = useRef(false);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
@@ -52,7 +51,7 @@ export default function CinematicStory() {
   useEffect(() => {
     const update = () => {
       raf.current = null;
-      if (!wrap.current || !ready) return;
+      if (!wrap.current) return;
       const r = wrap.current.getBoundingClientRect();
       const total = wrap.current.offsetHeight - window.innerHeight;
       const p = Math.max(0, Math.min(1, -r.top / Math.max(1, total)));
@@ -62,10 +61,7 @@ export default function CinematicStory() {
       const v = videoRef.current;
       if (!v || v.readyState < 1) return;
       const target = Math.min(MASTER_DURATION - 0.05, p * MASTER_DURATION);
-      // Skip-seek guard: don't hammer currentTime while a seek is pending
-      if (seeking.current !== null && Math.abs(target - seeking.current) < 0.08) return;
-      if (Math.abs(v.currentTime - target) > 0.02) {
-        seeking.current = target;
+      if (Math.abs(v.currentTime - target) > 0.016) {
         try {
           v.currentTime = target;
         } catch {
@@ -84,7 +80,7 @@ export default function CinematicStory() {
       window.removeEventListener('resize', onScroll);
       if (raf.current !== null) cancelAnimationFrame(raf.current);
     };
-  }, [ready]);
+  }, []);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -118,7 +114,6 @@ export default function CinematicStory() {
             aria-hidden="true"
             onCanPlay={() => setReady(true)}
             onError={() => setMediaFailed(true)}
-            onSeeked={() => { seeking.current = null; }}
           />
         )}
         <div className={`mediaFallback ${mediaFailed || reduced ? 'visible' : ''}`} aria-hidden="true" />
