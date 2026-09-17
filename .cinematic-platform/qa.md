@@ -4,7 +4,8 @@
 > every item in it is now verified below.
 > Functional implementation commit: `04d4407` · performance sprint: `fecf56e`
 > Review-fix regressions (PLAY JOURNEY midpoint + CSS-var intensity): `90e9e4e`
-> Production-footprint cleanup (public/media = serving assets only, 15.1MB): `c12034d` — review-ready HEAD: `c12034d`.
+> Production-footprint cleanup (public/media = serving assets only, 15.1MB): `c12034d`
+Visual polish pass (identity name, olive continuity, hero clarity, typography, copy, gold): `b51ca6f` — review-ready HEAD: `b51ca6f`. Before/after screenshots captured for hero+capabilities+manifesto+CTA at 390/1440.
 
 ## 1. Baseline & build
 | Check | Result | Evidence |
