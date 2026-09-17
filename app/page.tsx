@@ -40,7 +40,7 @@ export default function Home() {
       <section className="capabilities" id="capabilities">
         <div className="sectionIntro">
           <span>WHAT WE BUILD</span>
-          <h2>قدرات تمتد عبر<br />دورة حياة المشروع</h2>
+          <h2>قدرات متكاملة من التخطيط حتى التسليم</h2>
           <p className="demoNote">
             محتوى تجريبي — يُستبدل ببيانات تمكين المعتمدة عند استلام ملف الشركة ونطاق خدماتها الفعلي.
           </p>
