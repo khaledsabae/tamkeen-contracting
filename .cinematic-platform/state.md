@@ -20,10 +20,11 @@ Functional implementation commit: `04d4407` · performance sprint: `fecf56e` · 
 ## Timestamp map (master 22.0417s)
 ch1 0.000 · ch2 0.182 · ch3 0.364 · ch4 0.545 (SIGNATURE) · ch5 0.727 · ch6 0.911
 
-## Videos
-- public/media/cinematic-master.mp4 — 22.04s 1280x720 h264 CFR24 GOP0.5 faststart 20.6MB
-- public/media/cinematic-master-960.mp4 — same timeline 960w CRF22 8.1MB (≤1024px)
+## Videos (serving assets)
+- public/media/cinematic-master-desktop-compact.mp4 — 22.04s 1280x720 CRF24 GOP0.5 faststart 10.09MB (desktop)
+- public/media/cinematic-master-mobile-compact.mp4 — same timeline 854w CRF26 4.47MB (≤1024px)
 - posters: cinematic-poster.webp (107KB) / cinematic-poster-mobile.webp (39KB)
+- (full-quality source cinematic-master.mp4 20.6MB kept in repo history; superseded 960w variant removed)
 
 ## Next step (owner)
 Visual review via tunnel → approve → merge cinematic-v2 to main → production deploy (explicit order only).

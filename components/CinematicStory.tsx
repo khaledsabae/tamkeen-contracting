@@ -35,8 +35,8 @@ const WINDOWS = CHAPTERS.map((_, i) => ({
 }));
 
 // Compact masters (generated in the perf sprint; see asset-manifest)
-const DESKTOP_SRC = '/media/cinematic-master-1080-compact.mp4';
-const MOBILE_SRC = '/media/cinematic-master-720-compact.mp4';
+const DESKTOP_SRC = '/media/cinematic-master-desktop-compact.mp4';
+const MOBILE_SRC = '/media/cinematic-master-mobile-compact.mp4';
 
 
 // Chapter-local progress → continuous intensity (fade in 25%, fade out 15%)

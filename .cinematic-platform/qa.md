@@ -10,7 +10,7 @@
 |---|---|---|
 | Baseline typecheck (main@30c6762) | PASS | `tsc --noEmit` clean |
 | Baseline production build (main) | PASS | static prerender, 104kB first load |
-| Current typecheck (04d4407) | PASS | `tsc --noEmit` clean |
+| Current typecheck (HEAD) | PASS | `tsc --noEmit` clean |
 | Current production build | PASS | static prerender |
 | Next.js version | PASS | 15.5.25 (patched 15.5 line; full regression re-run) |
 
@@ -64,7 +64,7 @@
 | Check | Result |
 |---|---|
 | Mobile first-load | 0.76MB shell + poster only; video attaches at idle |
-| Mobile video selection | PASS — requests ONLY 720-compact (verified locally AND via tunnel; zero desktop bytes) |
+| Mobile video selection | PASS — requests ONLY the mobile-compact master (verified locally AND via tunnel; zero desktop bytes) |
 | Desktop compact master | 10.09MB (CRF24, GOP 0.5s, faststart) — target 8-12MB PASS |
 | Mobile compact 854w | 4.47MB (CRF26, quality frame-checked) — target 3-5MB PASS |
 | Manual scrub seek rate | 24Hz cap + frame-quantized targets (video is 24fps) |
@@ -88,5 +88,4 @@
 ## 9. Known limitations
 - Video is 720p (source clips' native resolution)
 - Demo content only — no invented company facts; placeholders clearly marked
-- Auto-play ride duration (~25s) is slightly longer than the video (1.15× factor) so text is readable
 - Production deployment NOT performed — awaiting owner visual approval
