@@ -90,3 +90,15 @@
 a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
   outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
 .nav a:focus-visible,.cta:focus-visible{outline-offset:6px}
+
+/* ===== V2 play journey control ===== */
+.playCtrl{position:absolute;z-index:9;bottom:3.4vh;right:8vw;display:inline-flex;align-items:center;gap:14px;
+  background:rgba(3,13,11,.55);border:1px solid rgba(215,173,85,.55);color:#fff;
+  font:600 10px Inter;letter-spacing:.22em;padding:14px 22px;cursor:pointer;
+  backdrop-filter:blur(6px);transition:border-color .25s, background .25s}
+.playCtrl:hover{border-color:var(--gold);background:rgba(3,13,11,.75)}
+.playCtrl .playIco{color:var(--gold);font-size:12px;letter-spacing:0}
+.playCtrl.playing{border-color:var(--gold);background:rgba(215,173,85,.14)}
+.playCtrl.playing .playIco{color:#fff}
+@media(max-width:800px){.playCtrl{right:50%;transform:translateX(50%);bottom:2.6vh;padding:12px 18px}}
+@media(prefers-reduced-motion:reduce){.playCtrl{display:none}}

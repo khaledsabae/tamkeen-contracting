@@ -38,6 +38,9 @@ export default function CinematicStory() {
   const video = useRef<HTMLVideoElement>(null);
   const raf = useRef<number | null>(null);
   const metaReady = useRef(false);
+  const autoRaf = useRef<number | null>(null);
+  const autoStop = useRef(false);
+  const [autoPlaying, setAutoPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [mediaFailed, setMediaFailed] = useState(false);
@@ -48,6 +51,48 @@ export default function CinematicStory() {
     reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     setIsMobile(window.matchMedia('(max-width: 1024px)').matches);
   }, []);
+
+  // ===== Auto-play journey: smooth programmatic scroll through the whole section.
+  // Duration matches the master video (22.04s) so visuals and text stay in sync.
+  const stopAuto = () => {
+    autoStop.current = true;
+    if (autoRaf.current !== null) cancelAnimationFrame(autoRaf.current);
+    autoRaf.current = null;
+    setAutoPlaying(false);
+  };
+  const startAuto = () => {
+    if (!wrap.current || autoPlaying) return;
+    autoStop.current = false;
+    setAutoPlaying(true);
+    const total = wrap.current.offsetHeight - window.innerHeight;
+    const from = Math.max(0, -wrap.current.getBoundingClientRect().top);
+    const target = Math.min(total, from + total); // ride to the end of the journey
+    const dist = Math.max(1, target - from);
+    const duration = Math.max(8000, (dist / Math.max(1, total)) * MASTER_DURATION * 1000 * 1.15);
+    const t0 = performance.now();
+    const ease = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2); // easeInOut
+    // One rAF loop with real timing:
+    autoRaf.current = requestAnimationFrame(function frame(now: number) {
+      if (autoStop.current) return;
+      const k = Math.min(1, (now - t0) / duration);
+      window.scrollTo({ top: from + dist * ease(k), behavior: 'instant' as ScrollBehavior });
+      if (k < 1) autoRaf.current = requestAnimationFrame(frame);
+      else setAutoPlaying(false);
+    });
+  };
+  // Manual input cancels auto-play (wheel, touch, keys)
+  useEffect(() => {
+    if (!autoPlaying) return;
+    const cancel = () => stopAuto();
+    window.addEventListener('wheel', cancel, { passive: true });
+    window.addEventListener('touchstart', cancel, { passive: true });
+    window.addEventListener('keydown', cancel);
+    return () => {
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchstart', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
+  }, [autoPlaying]);
 
   // Scroll → video currentTime, rAF-throttled, error-safe
   useEffect(() => {
@@ -159,7 +204,15 @@ export default function CinematicStory() {
 
         <div className="rail" aria-hidden="true"><span style={{ height: `${progress * 100}%` }} /></div>
         <div className="counter" aria-hidden="true"><b>0{active + 1}</b><i />06</div>
-        <div className="scrollHint" aria-hidden="true">SCROLL TO BUILD <span>↓</span></div>
+        <button
+          type="button"
+          className={`playCtrl ${autoPlaying ? 'playing' : ''}`}
+          onClick={autoPlaying ? stopAuto : startAuto}
+          aria-label={autoPlaying ? 'إيقاف الرحلة التلقائية' : 'تشغيل الرحلة تلقائيًا'}
+        >
+          <span className="playIco" aria-hidden="true">{autoPlaying ? '❚❚' : '▶'}</span>
+          {autoPlaying ? 'STOP' : 'PLAY JOURNEY'}
+        </button>
       </div>
     </section>
   );
